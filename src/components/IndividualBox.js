@@ -1,5 +1,5 @@
 import React,{ Component } from 'react';
-import { View, Text, AsyncStorage, ListView, ActivityIndicator } from 'react-native';
+import { View, Text, AsyncStorage, ListView, ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import WeekRowUnChecked from './WeekRowUnChecked';
 import WeekRowChecked from './WeekRowChecked';
 
@@ -88,8 +88,29 @@ class IndividualBox extends Component {
         )
     }
 
+    renderOffset(){
+        if(Platform.OS === 'android')
+            return (<View style={{ paddingBottom: 30 }} />);
+
+        return;
+    }
+
     render() {
         const { headerStyle, textStyle } = styles;
+
+        // const smartStyles = StyleSheet.create({
+        //     headerStyle:{
+        //         backgroundColor: '#651923',
+        //         flexDirection: 'column',
+        //         justifyContent: 'center',
+        //         shadowColor: '#000',
+        //         shadowOffset: { width: 0, height: 2 },
+        //         shadowOpacity: 0.2,
+        //         elevation: 2,
+        //         position: 'relative',
+        //         height: (Platform.OS === 'ios') ? 120 : 60,
+        //     }
+        // });
             
         return(
             <View>
@@ -97,7 +118,7 @@ class IndividualBox extends Component {
                     <Text style={textStyle}>{this.props.name}</Text>
                 </View>
                 {this.renderList()}
-                <View style={{ paddingBottom: 30 }} />
+                {this.renderOffset()}
             </View>
         );
     }
@@ -109,7 +130,7 @@ const styles = {
         backgroundColor: '#651923',
         flexDirection: 'column',
         justifyContent: 'center',
-        height: 60,
+        height: (Platform.OS === 'ios') ? 80 : 60,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
@@ -120,7 +141,8 @@ const styles = {
         color: 'white',
         fontWeight: 'bold',
         paddingLeft: 15,
-        fontSize: 20 
+        fontSize: 20,
+        paddingTop: (Platform.OS === 'ios') ? 10 : 0, 
     },
     spinnerStyle: {
         flex: 1,
