@@ -24,33 +24,87 @@ class IndividualBox extends Component {
 
         } 
 
-        weeks.forEach( (week, index) => {
-            global.storage.load({
-                key: week.id
+        global.storage.load({
+                key: this.props.name+1
             }).then(ret => {
 
-                week.checked = ret.payed;
+                    weeks.forEach( (week, index) => {
+                        global.storage.load({
+                            key: week.id
+                        }).then(ret => {
 
-                if(index === 47){
+                            week.checked = ret.payed;
+
+                            if(index === 47){
+                                this.createDataSource(weeks);
+                                this.setState({ weeks: weeks });
+                            }
+
+                        }).catch(err => {
+                            console.warn(err.message);
+                            switch (err.name) {
+                                case 'NotFoundError':
+                                    // TODO;
+                                    break;
+                                case 'ExpiredError':
+                                    // TODO
+                                    break;
+                            }
+                        });
+                    });
+
                     this.createDataSource(weeks);
-                    this.setState({ weeks: weeks });
-                }
 
             }).catch(err => {
                 console.warn(err.message);
                 switch (err.name) {
                     case 'NotFoundError':
-                        // TODO;
+                    
+                        // If there's no instances on the DB yet, they get created and then the state is updated
+
+                        for(var i = 1; i < 49; i++){
+                            global.storage.save({
+                                key: this.props.name+i,
+                                rawData: { 
+                                    payed: false 
+                                }
+                            });
+                        }
+
+
+                        weeks.forEach( (week, index) => {
+                        global.storage.load({
+                            key: week.id
+                        }).then(ret => {
+
+                            week.checked = ret.payed;
+
+                            if(index === 47){
+                                this.createDataSource(weeks);
+                                this.setState({ weeks: weeks });
+                            }
+
+                        }).catch(err => {
+                            console.warn(err.message);
+                            switch (err.name) {
+                                case 'NotFoundError':
+                                    // TODO;
+                                    break;
+                                case 'ExpiredError':
+                                    // TODO
+                                    break;
+                            }
+                        });
+                    });
+
                         break;
                     case 'ExpiredError':
                         // TODO
+                        console.log('not found 2');
                         break;
                 }
             });
-        });
-        
-
-        this.createDataSource(weeks);
+    
     }
 
     createDataSource(weeks){
@@ -97,20 +151,6 @@ class IndividualBox extends Component {
 
     render() {
         const { headerStyle, textStyle } = styles;
-
-        // const smartStyles = StyleSheet.create({
-        //     headerStyle:{
-        //         backgroundColor: '#651923',
-        //         flexDirection: 'column',
-        //         justifyContent: 'center',
-        //         shadowColor: '#000',
-        //         shadowOffset: { width: 0, height: 2 },
-        //         shadowOpacity: 0.2,
-        //         elevation: 2,
-        //         position: 'relative',
-        //         height: (Platform.OS === 'ios') ? 120 : 60,
-        //     }
-        // });
             
         return(
             <View>
